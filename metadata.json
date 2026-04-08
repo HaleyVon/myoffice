@@ -1,0 +1,7 @@
+{
+  "name": "Agent's Office",
+  "description": "A virtual IT team that develops products based on your ideas, featuring a pixel-art office UI, real-time agent simulation, and voice interaction.",
+  "requestFramePermissions": [
+    "microphone"
+  ]
+}
