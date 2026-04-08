@@ -268,8 +268,8 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-pm-bg text-pm-text font-mono p-4 md:p-6 flex flex-col gap-4 md:gap-6">
-      <header className="flex flex-col md:flex-row md:items-center justify-between border-b-4 border-pm-gold pb-4 gap-4">
+    <div className="min-h-screen lg:h-screen bg-pm-bg text-pm-text font-mono p-4 md:p-6 flex flex-col gap-4 md:gap-6 lg:overflow-hidden">
+      <header className="shrink-0 flex flex-col md:flex-row md:items-center justify-between border-b-4 border-pm-gold pb-4 gap-4">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 bg-pm-panel pixel-border flex items-center justify-center text-pm-gold shrink-0">
             <Briefcase size={20} />
@@ -287,10 +287,10 @@ export default function App() {
         </div>
       </header>
 
-      <main className="flex-1 grid grid-cols-1 lg:grid-cols-3 gap-6 min-h-[600px]">
+      <main className="flex-1 flex flex-col lg:grid lg:grid-cols-3 gap-6 min-h-0">
         {/* Left Column: Office View / Requirements / Preview */}
-        <div className="lg:col-span-2 flex flex-col gap-4 md:gap-6">
-          <div className="flex flex-wrap gap-2">
+        <div className="lg:col-span-2 flex flex-col gap-4 md:gap-6 min-h-[600px] lg:min-h-0 flex-1">
+          <div className="shrink-0 flex flex-wrap gap-2">
             <button
               onClick={() => setActiveTab('office')}
               className={`flex items-center gap-2 px-3 py-2 text-sm md:text-base pixel-btn ${activeTab === 'office' ? 'active' : ''}`}
@@ -333,11 +333,11 @@ export default function App() {
             </button>
           </div>
 
-          <div className="flex-1 pixel-border bg-pm-dark overflow-hidden min-h-[400px] relative flex flex-col">
+          <div className="flex-1 pixel-border bg-pm-dark overflow-hidden relative flex flex-col min-h-0">
             {activeTab === 'office' && <Office agents={agents} />}
             
             {activeTab === 'team' && (
-              <div className="p-4 md:p-6 h-full overflow-y-auto bg-pm-dark text-pm-text">
+              <div className="flex-1 p-4 md:p-6 overflow-y-auto bg-pm-dark text-pm-text">
                 <h2 className="text-xl font-bold text-pm-gold mb-6 border-b border-pm-gold/30 pb-2">TEAM SETTINGS_</h2>
                 <div className="flex flex-col gap-6">
                   {agents.map(agent => (
@@ -387,7 +387,7 @@ export default function App() {
             )}
 
             {activeTab === 'requirements' && (
-              <div className="p-4 md:p-6 h-full overflow-y-auto bg-pm-dark text-pm-text">
+              <div className="flex-1 p-4 md:p-6 overflow-y-auto bg-pm-dark text-pm-text">
                 {requirementsMd ? (
                   <div className="prose max-w-none font-mono">
                     <ReactMarkdown>{requirementsMd}</ReactMarkdown>
@@ -401,7 +401,7 @@ export default function App() {
             )}
 
             {activeTab === 'plans' && (
-              <div className="p-4 md:p-6 h-full overflow-y-auto bg-pm-dark text-pm-text flex flex-col">
+              <div className="flex-1 p-4 md:p-6 overflow-y-auto bg-pm-dark text-pm-text flex flex-col">
                 <div className="flex justify-between items-center mb-6 border-b border-pm-gold/30 pb-2">
                   <h2 className="text-xl font-bold text-pm-gold">PLAN FILES_</h2>
                   <button 
@@ -442,7 +442,7 @@ export default function App() {
           </div>
           
           {/* Boss Action Panel */}
-          <div className="pixel-border p-3 md:p-4 bg-pm-panel flex flex-col sm:flex-row items-center justify-between gap-3">
+          <div className="shrink-0 pixel-border p-3 md:p-4 bg-pm-panel flex flex-col sm:flex-row items-center justify-between gap-3">
             <div className="text-xs md:text-sm text-pm-gold-dark uppercase font-bold text-center sm:text-left">
               STATUS: {getPhaseText(phase)}
             </div>
@@ -470,7 +470,7 @@ export default function App() {
         </div>
 
         {/* Right Column: Chat Log */}
-        <div className="h-[50vh] lg:h-auto min-h-[400px]">
+        <div className="flex flex-col min-h-[500px] lg:min-h-0 lg:h-full">
           <ChatLog 
             messages={messages} 
             agents={agents} 

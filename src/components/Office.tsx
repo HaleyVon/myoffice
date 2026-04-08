@@ -74,7 +74,7 @@ export const Office: React.FC<OfficeProps> = ({ agents }) => {
   );
 
   return (
-    <div className="w-full h-full bg-pm-dark p-4 md:p-8 relative overflow-hidden flex flex-col gap-4 md:gap-8 min-h-[400px]">
+    <div className="flex-1 w-full bg-pm-dark p-4 md:p-8 relative overflow-y-auto flex flex-col gap-4 md:gap-8">
       {/* Background grid pattern */}
       <div className="absolute inset-0 opacity-20 pointer-events-none" style={{ backgroundImage: 'linear-gradient(to right, var(--color-pm-gold-dark) 2px, transparent 2px), linear-gradient(to bottom, var(--color-pm-gold-dark) 2px, transparent 2px)', backgroundSize: '40px 40px' }}></div>
       
