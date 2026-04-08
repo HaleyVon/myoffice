@@ -13,15 +13,27 @@ interface ChatLogProps {
 export const ChatLog: React.FC<ChatLogProps> = ({ messages, agents, onSendMessage, isSimulating }) => {
   const [input, setInput] = useState('');
   const endOfMessagesRef = useRef<HTMLDivElement>(null);
+  const chatContainerRef = useRef<HTMLDivElement>(null);
+  const [autoScroll, setAutoScroll] = useState(true);
+
+  const handleScroll = () => {
+    if (!chatContainerRef.current) return;
+    const { scrollTop, scrollHeight, clientHeight } = chatContainerRef.current;
+    const isNearBottom = scrollHeight - scrollTop - clientHeight < 50;
+    setAutoScroll(isNearBottom);
+  };
 
   useEffect(() => {
-    endOfMessagesRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages, isSimulating]);
+    if (autoScroll) {
+      endOfMessagesRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [messages, isSimulating, autoScroll]);
 
   const handleSend = () => {
     if (input.trim() && !isSimulating) {
       onSendMessage(input.trim());
       setInput('');
+      setAutoScroll(true);
     }
   };
 
@@ -32,7 +44,11 @@ export const ChatLog: React.FC<ChatLogProps> = ({ messages, agents, onSendMessag
         <p className="text-sm text-pm-gold-dark">SYSTEM: ONLINE</p>
       </div>
       
-      <div className="flex-1 overflow-y-auto p-4 space-y-4">
+      <div 
+        className="flex-1 overflow-y-auto p-4 space-y-4"
+        ref={chatContainerRef}
+        onScroll={handleScroll}
+      >
         {messages.map((msg) => {
           const isUser = msg.senderId === 'user';
           const agent = agents.find(a => a.id === msg.senderId);

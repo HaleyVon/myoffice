@@ -61,6 +61,7 @@ export default function App() {
     }
 
     setIsSimulating(true);
+    setActiveTab('office');
     
     try {
       if (phase === 'IDLE' || phase === 'PM_GATHERING' || phase === 'WAITING_PM_APPROVAL') {
@@ -111,6 +112,7 @@ export default function App() {
   const handleApproveRequirements = async () => {
     setPhase('AGENT_PLANNING');
     setIsSimulating(true);
+    setActiveTab('office');
     
     const pmMsgId = Date.now().toString() + '_pm_approve';
     setMessages(prev => [...prev, { id: pmMsgId, senderId: 'alice', text: '보스의 승인이 완료되었습니다. 팀원들은 각자의 작업 계획을 수립해 주세요.', timestamp: Date.now() }]);
@@ -173,6 +175,7 @@ export default function App() {
   const handleApprovePlans = async () => {
     setPhase('AGENT_EXECUTING');
     setIsSimulating(true);
+    setActiveTab('office');
     
     setMessages(prev => [...prev, { id: Date.now().toString() + '_boss_approve', senderId: 'user', text: '계획을 승인합니다. 작업 시작하세요.', timestamp: Date.now() }]);
 

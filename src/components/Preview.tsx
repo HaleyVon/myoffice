@@ -7,8 +7,8 @@ interface PreviewProps {
 
 export const Preview: React.FC<PreviewProps> = ({ code }) => {
   return (
-    <div className="w-full h-full bg-pm-dark flex flex-col overflow-hidden">
-      <div className="bg-pm-panel border-b-4 border-pm-gold p-4 flex items-center justify-between">
+    <div className="flex-1 w-full bg-pm-dark flex flex-col min-h-[600px]">
+      <div className="bg-pm-panel border-b-4 border-pm-gold p-4 flex items-center justify-between shrink-0">
         <div className="flex items-center gap-2">
           <MonitorPlay size={18} className="text-pm-gold" />
           <h2 className="text-sm font-bold text-pm-gold uppercase tracking-widest" style={{ textShadow: '1px 1px 0px #000' }}>PROTOTYPE_PREVIEW</h2>
@@ -25,7 +25,7 @@ export const Preview: React.FC<PreviewProps> = ({ code }) => {
           <iframe
             srcDoc={code}
             title="Prototype Preview"
-            className="w-full h-full border-0 bg-pm-bg"
+            className="absolute inset-0 w-full h-full border-0 bg-pm-bg"
             sandbox="allow-scripts allow-same-origin allow-forms"
           />
         ) : (
