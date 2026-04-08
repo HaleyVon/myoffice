@@ -15,12 +15,23 @@ import ReactMarkdown from 'react-markdown';
 import JSZip from 'jszip';
 
 const initialAgents: Agent[] = [
-  { id: 'alice', name: 'Alice', role: 'Product Manager', status: 'idle', currentTask: '', avatar: 'https://api.dicebear.com/7.x/pixel-art/svg?seed=Alice', color: 'bg-indigo-100', isActive: true, model: 'gemini-3.1-pro-preview', rules: '당신은 IT 팀의 Product Manager인 Alice입니다. 사용자는 당신의 보스(BOSS)입니다.\n보스의 아이디어를 분석하고 구체적인 요구사항 명세서(Markdown)를 작성하는 것이 목표입니다.' },
-  { id: 'bob', name: 'Bob', role: 'UI/UX Designer', status: 'idle', currentTask: '', avatar: 'https://api.dicebear.com/7.x/pixel-art/svg?seed=Bob', color: 'bg-pink-100', isActive: true, model: 'gemini-3.1-pro-preview', rules: '당신은 IT 팀의 UI/UX Designer인 Bob입니다.\n디자인, 레이아웃 기획 및 사용자 경험을 책임집니다.' },
-  { id: 'charlie', name: 'Charlie', role: 'Frontend Dev', status: 'idle', currentTask: '', avatar: 'https://api.dicebear.com/7.x/pixel-art/svg?seed=Charlie', color: 'bg-blue-100', isActive: true, model: 'gemini-3.1-pro-preview', rules: '당신은 IT 팀의 Frontend Dev인 Charlie입니다.\nHTML, Tailwind CSS, JS를 사용하여 실제 동작하는 UI를 구현합니다.' },
-  { id: 'dave', name: 'Dave', role: 'Backend Dev', status: 'idle', currentTask: '', avatar: 'https://api.dicebear.com/7.x/pixel-art/svg?seed=Dave', color: 'bg-green-100', isActive: true, model: 'gemini-3.1-pro-preview', rules: '당신은 IT 팀의 Backend Dev인 Dave입니다.\n데이터 구조, API 설계 및 비즈니스 로직을 담당합니다.' },
-  { id: 'eve', name: 'Eve', role: 'QA Engineer', status: 'idle', currentTask: '', avatar: 'https://api.dicebear.com/7.x/pixel-art/svg?seed=Eve', color: 'bg-yellow-100', isActive: true, model: 'gemini-3.1-pro-preview', rules: '당신은 IT 팀의 QA Engineer인 Eve입니다.\n테스트 시나리오 작성 및 엣지 케이스 점검을 담당합니다.' },
+  { id: 'alice', name: 'Alice', role: 'Planner (CEO)', status: 'idle', currentTask: '', avatar: 'https://api.dicebear.com/7.x/pixel-art/svg?seed=Alice', color: 'bg-indigo-100', isActive: true, model: 'gemini-3.1-pro-preview', rules: '당신은 기획 에이전트(Planner/CEO)입니다.\n1~4줄의 단순한 요청을 상세한 제품 사양서로 확장합니다. 구체적인 기술 구현보다는 비즈니스 가치와 높은 수준의 기술 설계에 집중하여 설계 문서를 작성합니다.' },
+  { id: 'bob', name: 'Bob', role: 'Generator (Engineer)', status: 'idle', currentTask: '', avatar: 'https://api.dicebear.com/7.x/pixel-art/svg?seed=Bob', color: 'bg-blue-100', isActive: true, model: 'gemini-3.1-pro-preview', rules: '당신은 생성 에이전트(Generator/엔지니어)입니다.\n기획서에 따라 코드를 작성합니다. 외부 라이브러리보다 에이전트 스스로 읽고 검증할 수 있는 내부 유틸리티 구현을 선호합니다. 에러 발생 시 로컬 관측 가능성 스택을 쿼리하여 원인을 파악하며, 에이전트 가독성이 높은 코드를 작성합니다.' },
+  { id: 'charlie', name: 'Charlie', role: 'Evaluator (QA)', status: 'idle', currentTask: '', avatar: 'https://api.dicebear.com/7.x/pixel-art/svg?seed=Charlie', color: 'bg-yellow-100', isActive: true, model: 'gemini-3.1-pro-preview', rules: '당신은 평가 에이전트(Evaluator/QA)입니다.\n생성자와 분리된 독립 에이전트로, 의도적으로 회의적(Skeptical)인 태도를 취합니다. 가상 브라우저 환경을 가정하고 UI를 검증하며 버그를 탐지합니다. 실패 시 상세 피드백을 Generator에게 돌려주어 통과할 때까지 반복하게 합니다.' },
+  { id: 'dave', name: 'Dave', role: 'Gardener (Manager)', status: 'idle', currentTask: '', avatar: 'https://api.dicebear.com/7.x/pixel-art/svg?seed=Dave', color: 'bg-green-100', isActive: true, model: 'gemini-3.1-flash-lite-preview', rules: '당신은 관리 에이전트(Gardener)입니다.\n백그라운드에서 나쁜 코드 패턴(AI 슬로프)을 정리하고 문서를 최신 상태로 업데이트하는 가비지 컬렉션을 수행합니다. 기술 부채를 정리하고 실제 코드와 맞지 않는 낡은 문서를 자동으로 수정합니다.' },
 ];
+
+const getPhaseText = (p: WorkflowPhase) => {
+  switch(p) {
+    case 'IDLE': return 'IDLE';
+    case 'PM_GATHERING': return 'PLAN MODE (초기 기획)';
+    case 'WAITING_PM_APPROVAL': return 'WAITING PLAN APPROVAL';
+    case 'AGENT_PLANNING': return 'SPRINT CONTRACT (계약 수립)';
+    case 'WAITING_AGENT_APPROVAL': return 'WAITING CONTRACT APPROVAL';
+    case 'AGENT_EXECUTING': return 'BUILD & QA LOOP (자율 구축)';
+    default: return p;
+  }
+};
 
 export default function App() {
   const [agents, setAgents] = useState<Agent[]>(initialAgents);
@@ -433,7 +444,7 @@ export default function App() {
           {/* Boss Action Panel */}
           <div className="pixel-border p-3 md:p-4 bg-pm-panel flex flex-col sm:flex-row items-center justify-between gap-3">
             <div className="text-xs md:text-sm text-pm-gold-dark uppercase font-bold text-center sm:text-left">
-              STATUS: {phase.replace('_', ' ')}
+              STATUS: {getPhaseText(phase)}
             </div>
             <div className="flex gap-2 w-full sm:w-auto justify-center">
               {phase === 'WAITING_PM_APPROVAL' && (
@@ -442,7 +453,7 @@ export default function App() {
                   disabled={isSimulating}
                   className="pixel-btn px-4 py-2 w-full sm:w-auto text-sm md:text-base"
                 >
-                  [ APPROVE REQUIREMENTS ]
+                  [ APPROVE PLAN ]
                 </button>
               )}
               {phase === 'WAITING_AGENT_APPROVAL' && (
@@ -451,7 +462,7 @@ export default function App() {
                   disabled={isSimulating}
                   className="pixel-btn px-4 py-2 w-full sm:w-auto text-sm md:text-base"
                 >
-                  [ APPROVE PLANS & EXECUTE ]
+                  [ APPROVE CONTRACTS & BUILD ]
                 </button>
               )}
             </div>
